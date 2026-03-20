@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Weather</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Mono:wght@300;400&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <!-- Dynamic weather layers -->
+        <div class="bg-layer" id="bg-layer"></div>
+        <canvas class="particle-canvas" id="particle-canvas"></canvas>
+        <div class="bg-overlay"></div>
+
+        <!-- ── SEARCH SCREEN ── -->
+        <div class="screen" id="search-screen">
+            <div class="search-inner">
+                <p class="label">/ weather</p>
+                <h1 class="search-title">How's the<br /><em>sky?</em></h1>
+                <div class="search-row">
+                    <div class="input-wrap" id="input-wrap">
+                        <input
+                            type="text"
+                            id="city-input"
+                            placeholder="Enter city name…"
+                            autocomplete="off"
+                            spellcheck="false"
+                        />
+                    </div>
+                    <button id="get-weather-btn">Search</button>
+                </div>
+                <div class="spinner-row hidden" id="spinner-row">
+                    <div class="spinner"></div>
+                    <span>Fetching weather…</span>
+                </div>
+                <div class="error-card hidden" id="error-message">
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    <span id="error-text">City not found.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── WEATHER SCREEN ── -->
+        <div class="screen hidden" id="weather-screen">
+            <div class="top-bar">
+                <button class="back-btn" id="back-btn">
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    >
+                        <polyline points="15 18 9 12 15 6" />
+                    </svg>
+                    Search
+                </button>
+                <div class="unit-toggle">
+                    <button class="unit-btn active" id="btn-c">°C</button>
+                    <button class="unit-btn" id="btn-f">°F</button>
+                </div>
+            </div>
+
+            <div class="weather-body">
+                <!-- Large animated SVG weather icon -->
+                <div class="wx-icon-wrap" id="wx-icon-wrap">
+                    <!-- Injected by JS -->
+                </div>
+
+                <div class="wx-location">
+                    <h2 id="city-name"></h2>
+                    <p id="weather-country"></p>
+                </div>
+
+                <div class="wx-temp-block">
+                    <div class="wx-temp" id="temperature"></div>
+                    <div class="wx-desc" id="description"></div>
+                    <div class="wx-range">
+                        <span id="temp-max"></span>
+                        <span class="range-sep">·</span>
+                        <span id="temp-min"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Glass details pill -->
+            <div class="details-pill">
+                <div class="detail-item">
+                    <!-- Humidity droplet SVG -->
+                    <svg class="detail-svg" viewBox="0 0 24 24" fill="none">
+                        <path
+                            d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            fill="rgba(255,255,255,0.12)"
+                        />
+                    </svg>
+                    <span class="detail-val" id="humidity"></span>
+                    <span class="detail-lbl">Humidity</span>
+                </div>
+
+                <div class="detail-sep"></div>
+
+                <div class="detail-item">
+                    <!-- Wind SVG -->
+                    <svg class="detail-svg" viewBox="0 0 24 24" fill="none">
+                        <path
+                            d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                        />
+                    </svg>
+                    <span class="detail-val" id="wind"></span>
+                    <span class="detail-lbl">Wind</span>
+                </div>
+
+                <div class="detail-sep"></div>
+
+                <div class="detail-item">
+                    <!-- Thermometer SVG -->
+                    <svg class="detail-svg" viewBox="0 0 24 24" fill="none">
+                        <path
+                            d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            fill="rgba(255,255,255,0.08)"
+                        />
+                    </svg>
+                    <span class="detail-val" id="feels-like"></span>
+                    <span class="detail-lbl">Feels like</span>
+                </div>
+
+                <div class="detail-sep"></div>
+
+                <div class="detail-item">
+                    <!-- Eye SVG -->
+                    <svg class="detail-svg" viewBox="0 0 24 24" fill="none">
+                        <path
+                            d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                        />
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="3"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            fill="rgba(255,255,255,0.1)"
+                        />
+                    </svg>
+                    <span class="detail-val" id="visibility"></span>
+                    <span class="detail-lbl">Visibility</span>
+                </div>
+            </div>
+        </div>
+
+        <script src="weather.js"></script>
+    </body>
+</html>
