@@ -548,7 +548,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 14px;
 }
 
 .wx-temp {
@@ -565,7 +565,8 @@ body {
     letter-spacing: 0.1em;
     text-transform: capitalize;
     color: var(--muted);
-    margin-top: 4px;
+    margin-top: 12px;
+    margin-bottom: 4px;
 }
 
 .wx-range {
