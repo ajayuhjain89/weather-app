@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const tempMinEl = document.getElementById("temp-min");
   const tempMaxEl = document.getElementById("temp-max");
 
-  const API_KEY = "dd4d98c0e6234b2913e836a4d840c672";
+  
 
   let currentData = null;
   let unit = "c";
@@ -524,7 +524,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Cancel any previous in-flight request
     if (abortCtrl) abortCtrl.abort();
     abortCtrl = new AbortController();
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&appid=${API_KEY}`;
+    const url = `/api/weather?city=${encodeURIComponent(city)}`;
     const res = await fetch(url, { signal: abortCtrl.signal });
     if (res.status === 404) throw new Error("City not found.");
     if (res.status === 401) throw new Error("Invalid API key.");
@@ -535,7 +535,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function fetchWeatherByCoords(lat, lon) {
     if (abortCtrl) abortCtrl.abort();
     abortCtrl = new AbortController();
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`;
+    const url = `/api/weather?lat=${lat}&lon=${lon}`;
     const res = await fetch(url, { signal: abortCtrl.signal });
     if (res.status === 401) throw new Error("Invalid API key.");
     if (!res.ok) throw new Error("Location weather unavailable.");
