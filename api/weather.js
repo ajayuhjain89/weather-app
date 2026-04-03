@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   const { city, lat, lon } = req.query;
-  const API_KEY = process.env.OPENWEATHER_API_KEY;
+  const API_KEY = (process.env.WEATHER_API_KEY || "").trim();
 
   if (!API_KEY) {
     return res.status(500).json({ error: "API key not configured" });
@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     let url = "";
     if (city) {
       url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
-        city
+        city,
       )}&units=metric&appid=${API_KEY}`;
     } else if (lat && lon) {
       url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`;

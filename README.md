@@ -56,7 +56,7 @@ cd weather-app
 The backend handler reads from an environment variable, so your key never ends up in the client code:
 
 ```env
-OPENWEATHER_API_KEY=your_api_key_here
+WEATHER_API_KEY=your_api_key_here
 ```
 
 Set this in your Vercel project settings (or `.env` locally if using Express).
@@ -98,7 +98,7 @@ Open the app in your mobile browser and tap **"Add to Home Screen"** — it inst
 
 | Variable              | Location       | Description                          |
 |-----------------------|----------------|--------------------------------------|
-| `OPENWEATHER_API_KEY` | Server env var | Your OpenWeatherMap API key          |
+| `WEATHER_API_KEY`     | Server env var | Your OpenWeatherMap API key          |
 | `CACHE_DURATION`      | `api.js`       | Session cache TTL (default: 10 min)  |
 | `CACHE_NAME`          | `sw.js`        | Service Worker cache version string  |
 
