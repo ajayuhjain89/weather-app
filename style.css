@@ -648,6 +648,9 @@ body {
 }
 
 .detail-val {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-family: "Playfair Display", serif;
     font-size: 1.05rem;
     font-weight: 700;
@@ -748,6 +751,9 @@ body.theme-light .detail-svg {
         width: calc(100% - 40px);
         margin-bottom: 28px;
         padding: 14px 8px;
+    }
+    .detail-val {
+        font-size: 0.9rem;
     }
     .wx-icon-wrap {
         width: 110px;

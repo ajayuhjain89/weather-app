@@ -44,13 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initAnimations(canvas);
 
-  // ── Compass helper ────────────────────────────────────
-  function degToCompass(deg) {
-    if (deg == null) return "";
-    const dirs = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-    return dirs[Math.round(deg / 45) % 8];
-  }
-
   // ── Weather type detection ────────────────────────────
   function getWeatherType(data) {
     const id = data.weather[0].id;
@@ -106,11 +99,14 @@ document.addEventListener("DOMContentLoaded", () => {
     tempMaxEl.textContent = `H: ${fmt(main.temp_max)}`;
     tempMinEl.textContent = `L: ${fmt(main.temp_min)}`;
     // Wind unit matches temperature unit (m/s for metric, mph for imperial)
-    const dir = degToCompass(wind.deg);
-    windEl.textContent =
+    const speedStr =
       unit === "c"
-        ? `${Math.round(wind.speed)} m/s${dir ? " " + dir : ""}`
-        : `${Math.round(wind.speed * 2.237)} mph${dir ? " " + dir : ""}`;
+        ? `${Math.round(wind.speed)} m/s`
+        : `${Math.round(wind.speed * 2.237)} mph`;
+
+    const arrowSvg = `<svg style="display:inline-block;width:12px;height:12px;margin-left:4px;transform:rotate(${wind.deg}deg)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>`;
+
+    windEl.innerHTML = `${speedStr}${wind.deg != null ? arrowSvg : ""}`;
   }
 
   // ── Fetch ─────────────────────────────────────────────
