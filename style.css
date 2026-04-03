@@ -164,37 +164,6 @@ body {
     }
 }
 
-/* Moon */
-.moon-orb {
-    position: fixed;
-    top: 50px;
-    right: 80px;
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    background: radial-gradient(
-        circle at 38% 38%,
-        #f0f4ff 0%,
-        #c8d8ff 50%,
-        #a0b8e8 100%
-    );
-    box-shadow:
-        0 0 40px rgba(180, 200, 255, 0.35),
-        0 0 80px rgba(180, 200, 255, 0.15);
-    z-index: 1;
-    pointer-events: none;
-}
-.moon-crescent {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background: #080f20; /* matches clear-night bg gradient */
-    filter: blur(2px);
-}
-
 /* Cloud divs */
 .cloud-blur {
     position: fixed;

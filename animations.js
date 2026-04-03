@@ -11,7 +11,7 @@ let currentAnimationType = null;
 export function initAnimations(canvasElement) {
   canvas = canvasElement;
   ctx = canvas.getContext("2d");
-  
+
   resizeCanvas();
   window.addEventListener("resize", resizeCanvas);
 
@@ -97,10 +97,7 @@ function startClearDay() {
   rays.classList.add("sun-rays");
   rays.setAttribute("viewBox", "0 0 200 200");
   const lines = [0, 45, 90, 135].map((angle) => {
-    const line = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "line",
-    );
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
     line.setAttribute("x1", "100");
     line.setAttribute("y1", "10");
     line.setAttribute("x2", "100");
@@ -119,12 +116,6 @@ function startClearDay() {
 
 // ── Clear night ───────────────────────────────────────
 function startClearNight() {
-  const moon = document.createElement("div");
-  moon.classList.add("moon-orb");
-  const crescent = document.createElement("div");
-  crescent.classList.add("moon-crescent");
-  moon.appendChild(crescent);
-  addExtra(moon);
   drawStars();
 }
 

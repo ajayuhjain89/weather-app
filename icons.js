@@ -1,5 +1,5 @@
-  export const weatherSVGs = {
-    "clear-day": `
+export const weatherSVGs = {
+  "clear-day": `
       <svg viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <radialGradient id="sunGrad" cx="50%" cy="50%" r="50%">
@@ -26,13 +26,26 @@
         <circle cx="70" cy="70" r="22" fill="#FFE566" opacity="0.6"/>
       </svg>`,
 
-    "clear-night": `
+  "clear-night": `
       <svg viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <radialGradient id="moonGrad" cx="40%" cy="40%" r="60%">
             <stop offset="0%" stop-color="#E8F0FF"/>
             <stop offset="100%" stop-color="#8BA8E0"/>
           </radialGradient>
+          <mask id="crescentMask">
+            <rect width="140" height="140" fill="white"/>
+            <circle cx="92" cy="58" r="26" fill="black"/>
+          </mask>
+          <filter id="moonGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur1"/>
+            <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur2"/>
+            <feMerge>
+              <feMergeNode in="blur2"/>
+              <feMergeNode in="blur1"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
         </defs>
         <!-- Stars -->
         <circle cx="30" cy="28" r="2" fill="#C8DAFF" opacity="0.8"><animate attributeName="opacity" values="0.8;0.2;0.8" dur="2.5s" repeatCount="indefinite"/></circle>
@@ -41,14 +54,14 @@
         <circle cx="118" cy="60" r="2" fill="#C8DAFF" opacity="0.5"><animate attributeName="opacity" values="0.5;0.1;0.5" dur="2.2s" repeatCount="indefinite"/></circle>
         <circle cx="55" cy="18" r="1.2" fill="#C8DAFF" opacity="0.6"><animate attributeName="opacity" values="0.6;0.2;0.6" dur="3.5s" repeatCount="indefinite"/></circle>
         <!-- Moon body -->
-        <circle cx="75" cy="72" r="34" fill="url(#moonGrad)" opacity="0.95"/>
-        <!-- Crescent cutout illusion -->
-        <circle cx="92" cy="58" r="26" fill="#0a1535" opacity="0.88"/>
+        <g filter="url(#moonGlow)">
+          <circle cx="75" cy="72" r="34" fill="url(#moonGrad)" mask="url(#crescentMask)" opacity="0.85"/>
+        </g>
         <!-- Soft glow ring -->
-        <circle cx="75" cy="72" r="34" stroke="#C8DAFF" stroke-width="1" opacity="0.3" fill="none"/>
+        <circle cx="75" cy="72" r="34" stroke="#C8DAFF" stroke-width="1" opacity="0.3" fill="none" mask="url(#crescentMask)"/>
       </svg>`,
 
-    cloudy: `
+  cloudy: `
       <svg viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="cloudGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -76,7 +89,7 @@
         </g>
       </svg>`,
 
-    rainy: `
+  rainy: `
       <svg viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="rainCloud" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -101,7 +114,7 @@
         </g>
       </svg>`,
 
-    stormy: `
+  stormy: `
       <svg viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="stormCloud" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -131,7 +144,7 @@
         </g>
       </svg>`,
 
-    snowy: `
+  snowy: `
       <svg viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="snowCloud" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -156,7 +169,7 @@
         </g>
       </svg>`,
 
-    misty: `
+  misty: `
       <svg viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="fogGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -173,4 +186,4 @@
         <rect x="10" y="100" width="120" height="7" rx="3.5" fill="url(#fogGrad)"><animate attributeName="opacity" values="0.4;0.8;0.4" dur="2.8s" begin="1.2s" repeatCount="indefinite"/><animateTransform attributeName="transform" type="translate" values="0,0;-8,0;0,0" dur="6s" repeatCount="indefinite"/></rect>
         <rect x="10" y="118" width="120" height="8" rx="4" fill="url(#fogGrad)"><animate attributeName="opacity" values="0.5;0.2;0.5" dur="3.2s" begin="0.6s" repeatCount="indefinite"/><animateTransform attributeName="transform" type="translate" values="0,0;5,0;0,0" dur="5.5s" repeatCount="indefinite"/></rect>
       </svg>`,
-  };
+};
