@@ -438,6 +438,7 @@ document.addEventListener("DOMContentLoaded", () => {
     getWeatherBtn.disabled = true;
     spinnerRow.classList.remove("hidden");
     errorMessage.classList.add("hidden");
+    recentSearchesContainer.classList.add("hidden");
 
     try {
       const data = await fetchWeatherData(city);
@@ -499,7 +500,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ── Events ────────────────────────────────────────────
-  getWeatherBtn.addEventListener("click", search);
+  getWeatherBtn.addEventListener("click", () => {
+    search();
+    recentSearchesContainer.classList.add("hidden");
+  });
   cityInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       search();
@@ -508,6 +512,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   cityInput.addEventListener("focus", () => {
+    errorMessage.classList.add("hidden");
     if (recentSearchesContainer.children.length > 0) {
       recentSearchesContainer.classList.remove("hidden");
     }
@@ -531,6 +536,7 @@ document.addEventListener("DOMContentLoaded", () => {
     getWeatherBtn.disabled = true;
     spinnerRow.classList.remove("hidden");
     errorMessage.classList.add("hidden");
+    recentSearchesContainer.classList.add("hidden");
 
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
