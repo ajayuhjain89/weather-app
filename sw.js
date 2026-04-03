@@ -1,10 +1,11 @@
-const CACHE_NAME = "weather-minimal-v2";
+const CACHE_NAME = "weather-minimal-v3";
 
 const ASSETS_TO_CACHE = [
   "/",
   "/index.html",
   "/style.css",
   "/weather.js",
+  "/animations.js",
   "/api.js",
   "/icons.js",
   "/favicon.png",
