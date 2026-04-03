@@ -38,6 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let lightningEl = null;
   let lightningTimer = null;
   let extraEls = [];
+  let isPaused = false;
+  let lastWeatherType = null;
 
   // ── Compass helper ────────────────────────────────────
   function degToCompass(deg) {
@@ -58,6 +60,24 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   resizeCanvas();
   window.addEventListener("resize", resizeCanvas);
+
+  // ── Battery Saver (Pause on tab hide) ─────────────────
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+      isPaused = true;
+      if (animFrameId) {
+        cancelAnimationFrame(animFrameId);
+        animFrameId = null;
+      }
+    } else {
+      isPaused = false;
+      // Resume the correct animation loop
+      if (lastWeatherType === "rainy") animateRain(false);
+      else if (lastWeatherType === "stormy") animateRain(true);
+      else if (lastWeatherType === "snowy") animateSnow();
+      else if (lastWeatherType === "clear-night") animateStars();
+    }
+  });
 
   // ── Weather type detection ────────────────────────────
   function getWeatherType(data) {
@@ -83,6 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ── Apply background + effects ────────────────────────
   function applyBackground(type) {
+    lastWeatherType = type;
     // Set CSS class on bg layer
     bgLayer.className = "bg-layer " + type;
 
@@ -185,6 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function animateStars() {
+    if (isPaused) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     particles.forEach((s) => {
       s.opacity += s.twinkleSpeed * s.twinkleDir;
@@ -238,7 +260,7 @@ document.addEventListener("DOMContentLoaded", () => {
       lightningEl.classList.add("lightning-flash");
       document.body.appendChild(lightningEl);
       lightningTimer = setInterval(() => {
-        if (Math.random() > 0.55) {
+        if (Math.random() > 0.55 && !isPaused) {
           lightningEl.style.transition = "none";
           lightningEl.style.opacity = "0.8";
           setTimeout(() => {
@@ -251,6 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function animateRain(isStorm) {
+    if (isPaused) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     particles.forEach((p) => {
       ctx.beginPath();
@@ -291,6 +314,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function animateSnow() {
+    if (isPaused) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     particles.forEach((p) => {
       p.wobble += p.wobbleSpeed;
