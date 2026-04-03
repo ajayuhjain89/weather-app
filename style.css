@@ -310,6 +310,27 @@ body {
     -webkit-backdrop-filter: blur(16px);
     overflow: hidden;
     transition: border-color 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+#locate-btn {
+    background: transparent;
+    border: none;
+    padding: 0 14px 0 0;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.38);
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    transition: color 0.2s ease;
+}
+#locate-btn:hover {
+    color: rgba(255, 255, 255, 0.85);
+}
+#locate-btn.loading {
+    animation: spin 0.9s linear infinite;
+    color: rgba(255, 255, 255, 0.6);
 }
 .input-wrap:focus-within {
     border-color: rgba(255, 255, 255, 0.55);

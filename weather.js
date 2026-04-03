@@ -37,6 +37,13 @@ document.addEventListener("DOMContentLoaded", () => {
   let extraEls = [];
   let abortCtrl = null; // Fix: abort stale in-flight fetches
 
+  // ── Compass helper ────────────────────────────────────
+  function degToCompass(deg) {
+    if (deg == null) return "";
+    const dirs = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+    return dirs[Math.round(deg / 45) % 8];
+  }
+
   // ── Canvas ────────────────────────────────────────────
   function resizeCanvas() {
     canvas.width = window.innerWidth;
@@ -505,10 +512,11 @@ document.addEventListener("DOMContentLoaded", () => {
     tempMaxEl.textContent = `H: ${fmt(main.temp_max)}`;
     tempMinEl.textContent = `L: ${fmt(main.temp_min)}`;
     // Wind unit matches temperature unit (m/s for metric, mph for imperial)
+    const dir = degToCompass(wind.deg);
     windEl.textContent =
       unit === "c"
-        ? `${Math.round(wind.speed)} m/s`
-        : `${Math.round(wind.speed * 2.237)} mph`;
+        ? `${Math.round(wind.speed)} m/s${dir ? " " + dir : ""}`
+        : `${Math.round(wind.speed * 2.237)} mph${dir ? " " + dir : ""}`;
   }
 
   // ── Fetch ─────────────────────────────────────────────
@@ -521,6 +529,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (res.status === 404) throw new Error("City not found.");
     if (res.status === 401) throw new Error("Invalid API key.");
     if (!res.ok) throw new Error("Something went wrong.");
+    return res.json();
+  }
+
+  async function fetchWeatherByCoords(lat, lon) {
+    if (abortCtrl) abortCtrl.abort();
+    abortCtrl = new AbortController();
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`;
+    const res = await fetch(url, { signal: abortCtrl.signal });
+    if (res.status === 401) throw new Error("Invalid API key.");
+    if (!res.ok) throw new Error("Location weather unavailable.");
     return res.json();
   }
 
@@ -624,8 +642,57 @@ document.addEventListener("DOMContentLoaded", () => {
   cityInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") search();
   });
-  // Restore last searched city
+
+  // ── Geolocation ───────────────────────────────────────
+  const locateBtn = document.getElementById("locate-btn");
+  locateBtn.addEventListener("click", () => {
+    if (!navigator.geolocation) {
+      errorText.textContent = "Geolocation not supported.";
+      errorMessage.classList.remove("hidden");
+      return;
+    }
+    locateBtn.classList.add("loading");
+    getWeatherBtn.disabled = true;
+    spinnerRow.classList.remove("hidden");
+    errorMessage.classList.add("hidden");
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const data = await fetchWeatherByCoords(
+            pos.coords.latitude,
+            pos.coords.longitude,
+          );
+          localStorage.setItem("lastCity", data.name);
+          cityInput.value = data.name;
+          displayWeatherData(data);
+        } catch (err) {
+          if (err.name === "AbortError") return;
+          errorText.textContent = err.message;
+          errorMessage.classList.remove("hidden");
+        } finally {
+          locateBtn.classList.remove("loading");
+          getWeatherBtn.disabled = false;
+          spinnerRow.classList.add("hidden");
+        }
+      },
+      () => {
+        errorText.textContent = "Location access denied.";
+        errorMessage.classList.remove("hidden");
+        locateBtn.classList.remove("loading");
+        getWeatherBtn.disabled = false;
+        spinnerRow.classList.add("hidden");
+      },
+      { timeout: 8000 },
+    );
+  });
+
+  // Restore + auto-fetch last searched city
   const lastCity = localStorage.getItem("lastCity");
-  if (lastCity) cityInput.value = lastCity;
-  cityInput.focus();
+  if (lastCity) {
+    cityInput.value = lastCity;
+    search();
+  } else {
+    cityInput.focus();
+  }
 });
