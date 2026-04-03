@@ -41,7 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let currentData = null;
   let unit = "c";
-  let lastWeatherType = null;
 
   initAnimations(canvas);
 
@@ -76,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ── Apply background + effects ────────────────────────
   function applyBackground(type) {
-    lastWeatherType = type;
     // Set CSS class on bg layer
     bgLayer.className = "bg-layer " + type;
 
