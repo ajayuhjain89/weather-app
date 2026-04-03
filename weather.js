@@ -280,14 +280,22 @@ document.addEventListener("DOMContentLoaded", () => {
           spinnerRow.classList.add("hidden");
         }
       },
-      () => {
-        errorText.textContent = "Location access denied.";
+      (err) => {
+        if (err.code === 1) {
+          errorText.textContent = "Location access denied.";
+        } else if (err.code === 2) {
+          errorText.textContent = err.message
+            ? `Location unavailable: ${err.message}`
+            : "Location unavailable.";
+        } else {
+          errorText.textContent = "Location request timed out.";
+        }
         errorMessage.classList.remove("hidden");
         locateBtn.classList.remove("loading");
         getWeatherBtn.disabled = false;
         spinnerRow.classList.add("hidden");
       },
-      { timeout: 8000 },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
     );
   });
 
