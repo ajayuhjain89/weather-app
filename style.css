@@ -266,10 +266,6 @@ body {
     display: none !important;
 }
 
-.screen.hidden {
-    display: none;
-}
-
 /* ── Search screen ── */
 .search-inner {
     width: 100%;
@@ -409,6 +405,18 @@ body {
     justify-content: space-between;
     align-items: stretch;
     padding: 0;
+    animation: screenFadeIn 0.35s ease;
+}
+
+@keyframes screenFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .top-bar {

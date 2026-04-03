@@ -80,8 +80,9 @@ document.addEventListener("DOMContentLoaded", () => {
             <stop offset="100%" stop-color="#FFA000"/>
           </radialGradient>
         </defs>
-        <!-- Rays -->
-        <g stroke="#FFD740" stroke-width="3" stroke-linecap="round" opacity="0.7">
+        <!-- Rotating rays wrapper -->
+        <g>
+          <g stroke="#FFD740" stroke-width="3" stroke-linecap="round" opacity="0.7">
           <line x1="70" y1="10" x2="70" y2="22"/>
           <line x1="70" y1="118" x2="70" y2="130"/>
           <line x1="10" y1="70" x2="22" y2="70"/>
@@ -91,10 +92,11 @@ document.addEventListener("DOMContentLoaded", () => {
           <line x1="114.9" y1="25.1" x2="106.4" y2="33.6"/>
           <line x1="33.6" y1="106.4" x2="25.1" y2="114.9"/>
         </g>
-        <!-- Sun circle -->
+          <animateTransform attributeName="transform" type="rotate" from="0 70 70" to="360 70 70" dur="20s" repeatCount="indefinite"/>
+        </g>
+        <!-- Sun circle stays static -->
         <circle cx="70" cy="70" r="28" fill="url(#sunGrad)" opacity="0.95"/>
         <circle cx="70" cy="70" r="22" fill="#FFE566" opacity="0.6"/>
-        <animateTransform attributeName="transform" type="rotate" from="0 70 70" to="360 70 70" dur="20s" repeatCount="indefinite"/>
       </svg>`,
 
     "clear-night": `
@@ -497,11 +499,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateTemps() {
     if (!currentData) return;
-    const { main } = currentData;
+    const { main, wind } = currentData;
     tempEl.textContent = fmt(main.temp);
     feelsLikeEl.textContent = fmt(main.feels_like);
     tempMaxEl.textContent = `H: ${fmt(main.temp_max)}`;
     tempMinEl.textContent = `L: ${fmt(main.temp_min)}`;
+    // Wind unit matches temperature unit (m/s for metric, mph for imperial)
+    windEl.textContent =
+      unit === "c"
+        ? `${Math.round(wind.speed)} m/s`
+        : `${Math.round(wind.speed * 2.237)} mph`;
   }
 
   // ── Fetch ─────────────────────────────────────────────
@@ -529,15 +536,17 @@ document.addEventListener("DOMContentLoaded", () => {
     countryEl.textContent = sys.country;
     descEl.textContent = weather[0].description;
     humidityEl.textContent = `${main.humidity}%`;
-    windEl.textContent = `${Math.round(wind.speed)} m/s`;
-    visibilityEl.textContent = visibility
-      ? `${(visibility / 1000).toFixed(1)} km`
-      : "—";
+    visibilityEl.textContent =
+      visibility != null ? `${(visibility / 1000).toFixed(1)} km` : "—";
 
     updateTemps();
 
     searchScreen.classList.add("hidden");
     weatherScreen.classList.remove("hidden");
+    // Re-trigger fade-in animation on every search
+    weatherScreen.style.animation = "none";
+    weatherScreen.offsetHeight; // force reflow
+    weatherScreen.style.animation = "";
   }
 
   // ── Search ────────────────────────────────────────────
@@ -554,6 +563,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const data = await fetchWeatherData(city);
+      localStorage.setItem("lastCity", city);
       displayWeatherData(data);
     } catch (err) {
       if (err.name === "AbortError") return; // stale request — ignore silently
@@ -588,6 +598,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.remove("theme-light"); // Bug fix: was persisting
     weatherScreen.classList.add("hidden");
     searchScreen.classList.remove("hidden");
+    cityInput.value = "";
+    cityInput.focus();
   });
 
   // ── Unit toggle ───────────────────────────────────────
@@ -612,5 +624,8 @@ document.addEventListener("DOMContentLoaded", () => {
   cityInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") search();
   });
+  // Restore last searched city
+  const lastCity = localStorage.getItem("lastCity");
+  if (lastCity) cityInput.value = lastCity;
   cityInput.focus();
 });
