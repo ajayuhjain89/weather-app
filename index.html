@@ -2,11 +2,15 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="theme-color" content="#1a1a2e" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <link rel="apple-touch-icon" href="icon-192.png" />
+        <meta
+            name="apple-mobile-web-app-status-bar-style"
+            content="black-translucent"
+        />
+        <link rel="icon" type="image/png" href="favicon.png" />
+        <link rel="apple-touch-icon" href="favicon.png" />
         <link rel="manifest" href="manifest.json" />
         <title>Weather</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -29,29 +33,41 @@
                 <p class="label">/ weather</p>
                 <h1 class="search-title">How's the<br /><em>sky?</em></h1>
                 <div class="search-row">
-                    <div class="input-wrap" id="input-wrap">
-                        <input
-                            type="text"
-                            id="city-input"
-                            placeholder="Enter city name…"
-                            autocomplete="off"
-                            spellcheck="false"
-                        />
-                        <button id="locate-btn" aria-label="Use my location">
-                            <svg
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
+                    <div
+                        class="search-input-group"
+                        style="position: relative; flex: 1"
+                    >
+                        <div class="input-wrap" id="input-wrap">
+                            <input
+                                type="text"
+                                id="city-input"
+                                placeholder="Enter city name…"
+                                autocomplete="off"
+                                spellcheck="false"
+                            />
+                            <button
+                                id="locate-btn"
+                                aria-label="Use my location"
                             >
-                                <circle cx="12" cy="12" r="3" />
-                                <path d="M12 1v4M12 19v4M1 12h4M19 12h4" />
-                            </svg>
-                        </button>
+                                <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <circle cx="12" cy="12" r="3" />
+                                    <path d="M12 1v4M12 19v4M1 12h4M19 12h4" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div
+                            class="recent-searches hidden"
+                            id="recent-searches"
+                        ></div>
                     </div>
                     <button id="get-weather-btn">Search</button>
                 </div>

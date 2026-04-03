@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const errorMessage = document.getElementById("error-message");
   const errorText = document.getElementById("error-text");
   const inputWrap = document.getElementById("input-wrap");
+  const recentSearchesContainer = document.getElementById("recent-searches");
   const searchScreen = document.getElementById("search-screen");
   const weatherScreen = document.getElementById("weather-screen");
   const backBtn = document.getElementById("back-btn");
@@ -33,8 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const visibilityEl = document.getElementById("visibility");
   const tempMinEl = document.getElementById("temp-min");
   const tempMaxEl = document.getElementById("temp-max");
-
-  
 
   let currentData = null;
   let unit = "c";
@@ -401,6 +400,33 @@ document.addEventListener("DOMContentLoaded", () => {
     weatherScreen.style.animation = "";
   }
 
+  // ── Recent Searches ───────────────────────────────────
+  function renderRecentSearches() {
+    const searches = JSON.parse(localStorage.getItem("recentSearches") || "[]");
+    recentSearchesContainer.innerHTML = "";
+    searches.forEach((city) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "recent-search-item";
+      btn.textContent = city;
+      btn.onclick = () => {
+        cityInput.value = city;
+        search();
+        recentSearchesContainer.classList.add("hidden");
+      };
+      recentSearchesContainer.appendChild(btn);
+    });
+  }
+
+  function addRecentSearch(city) {
+    let searches = JSON.parse(localStorage.getItem("recentSearches") || "[]");
+    searches = searches.filter((s) => s.toLowerCase() !== city.toLowerCase());
+    searches.unshift(city);
+    searches = searches.slice(0, 3);
+    localStorage.setItem("recentSearches", JSON.stringify(searches));
+    renderRecentSearches();
+  }
+
   // ── Search ────────────────────────────────────────────
   async function search() {
     const city = cityInput.value.trim();
@@ -415,7 +441,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const data = await fetchWeatherData(city);
-      localStorage.setItem("lastCity", city);
+      localStorage.setItem("lastCity", data.name);
+      addRecentSearch(data.name);
       displayWeatherData(data);
     } catch (err) {
       if (err.name === "AbortError") return; // stale request — ignore silently
@@ -451,7 +478,7 @@ document.addEventListener("DOMContentLoaded", () => {
     weatherScreen.classList.add("hidden");
     searchScreen.classList.remove("hidden");
     cityInput.value = "";
-    cityInput.focus();
+    setTimeout(() => cityInput.focus(), 10);
   });
 
   // ── Unit toggle ───────────────────────────────────────
@@ -474,7 +501,22 @@ document.addEventListener("DOMContentLoaded", () => {
   // ── Events ────────────────────────────────────────────
   getWeatherBtn.addEventListener("click", search);
   cityInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") search();
+    if (e.key === "Enter") {
+      search();
+      recentSearchesContainer.classList.add("hidden");
+    }
+  });
+
+  cityInput.addEventListener("focus", () => {
+    if (recentSearchesContainer.children.length > 0) {
+      recentSearchesContainer.classList.remove("hidden");
+    }
+  });
+
+  document.addEventListener("click", (e) => {
+    if (e.target !== cityInput && !recentSearchesContainer.contains(e.target)) {
+      recentSearchesContainer.classList.add("hidden");
+    }
   });
 
   // ── Geolocation ───────────────────────────────────────
@@ -498,6 +540,7 @@ document.addEventListener("DOMContentLoaded", () => {
             pos.coords.longitude,
           );
           localStorage.setItem("lastCity", data.name);
+          addRecentSearch(data.name);
           cityInput.value = data.name;
           displayWeatherData(data);
         } catch (err) {
@@ -521,12 +564,13 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   });
 
+  // Initialize recent searches
+  renderRecentSearches();
+
   // Restore + auto-fetch last searched city
   const lastCity = localStorage.getItem("lastCity");
   if (lastCity) {
     cityInput.value = lastCity;
     search();
-  } else {
-    cityInput.focus();
   }
 });
