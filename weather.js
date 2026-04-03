@@ -2,6 +2,11 @@ import { fetchWeatherData, fetchWeatherByCoords } from "./api.js";
 import { weatherSVGs } from "./icons.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+  // ── Register Service Worker (PWA) ──
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  }
+
   // ── DOM refs ──────────────────────────────────────────
   const cityInput = document.getElementById("city-input");
   const getWeatherBtn = document.getElementById("get-weather-btn");
